@@ -1692,10 +1692,8 @@ ffs_fs_mount(struct file_system_type *t, int flags,
 	data.ffs_data = ffs;
 
 	rv = mount_nodev(t, flags, &data, ffs_sb_fill);
-	if (IS_ERR(rv) && data.ffs_data) {
-	    ffs_release_dev(data.ffs_data);
+	if (IS_ERR(rv) && data.ffs_data)
 		ffs_data_put(data.ffs_data);
-	}
 	return rv;
 }
 
@@ -3199,13 +3197,13 @@ static inline struct f_fs_opts *ffs_do_functionfs_bind(struct usb_function *f,
 	if (!ffs_opts->no_configfs)
 		ffs_dev_lock();
 	ret = ffs_opts->dev->desc_ready ? 0 : -ENODEV;
-	ffs_data = ffs_opts->dev->ffs_data;
+	ffs = ffs_opts->dev->ffs_data;
 	if (!ffs_opts->no_configfs)
 		ffs_dev_unlock();
 	if (ret)
 		return ERR_PTR(ret);
 
-	func->ffs = ffs_data;
+	func->ffs = ffs;
 	func->conf = c;
 	func->gadget = c->cdev->gadget;
 
